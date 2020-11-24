@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>matrix-org/matrix-react-sdk</title>
+        <link rel="stylesheet" href="../../../res/style.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+    </head>
+    <body class='index'>
+        <h1>matrix-org/matrix-react-sdk review stats (Core Team PRs)</h1>
+        <p>For team <code>element-web</code></p>
+
+        <h2>Volume of PRs put up for review</h2>
+        <p>Organized by the week in which review was first requested.</p>
+        <div class='canvas'>
+            <canvas id="prVolume"></canvas>
+        </div>
+
+
+        <h2>Days between opening and first review request</h2>
+        <p>Organized by the week in which review was first requested.</p>
+        <div class='canvas'>
+            <canvas id="openToReviewRequest"></canvas>
+        </div>
+
+
+        <h2>Days between the first review request and first review</h2>
+        <p>Organized by the week in which review was first requested.</p>
+        <div class='canvas'>
+            <canvas id="firstReview"></canvas>
+        </div>
+
+
+        <h2>Days between the first review request and first approving review</h2>
+        <p>Organized by the week in which review was first requested.</p>
+        <div class='canvas'>
+            <canvas id="approvingReview"></canvas>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+
+        <script type="text/javascript">const byWeekData = {"2018-10-07":{"openToReviewRequest":[138,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[18,0,0,0,0,0,0,0,0,0,2],"reviewRequestToApproved":[19,0,0,0,0,0,0,0,0,0,3]},"2018-06-24":{"openToReviewRequest":[22,13,0,0],"reviewRequestToFirst":[2,2,0,0],"reviewRequestToApproved":[2,2,0,0]},"2018-06-17":{"openToReviewRequest":[0,0],"reviewRequestToFirst":[0,2],"reviewRequestToApproved":[1,2]},"2018-07-01":{"openToReviewRequest":[3,0,0],"reviewRequestToFirst":[0,1,0],"reviewRequestToApproved":[0,16,0]},"2018-07-08":{"openToReviewRequest":[4,0,0],"reviewRequestToFirst":[0,1,0],"reviewRequestToApproved":[0,1,0]},"2018-07-15":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,3,1,1,1,2,1,0,0,3],"reviewRequestToApproved":[1,3,1,1,1,2,1,0,0,3]},"2018-07-22":{"openToReviewRequest":[0,0,0,0,0,0],"reviewRequestToFirst":[0,0,64,0,0,0],"reviewRequestToApproved":[0,0,64,0,0,0]},"2018-07-29":{"openToReviewRequest":[6,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,2,0,1,0,0,0,0,2],"reviewRequestToApproved":[0,2,0,1,0,0,0,0,2]},"2018-08-05":{"openToReviewRequest":[0,0,0],"reviewRequestToFirst":[0,0,0],"reviewRequestToApproved":[0,0,0]},"2018-08-12":{"openToReviewRequest":[3,0,0,0],"reviewRequestToFirst":[0,0,0,0],"reviewRequestToApproved":[2,0,0,0]},"2018-08-19":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,2,0,0,0,0,0,0,0,0,0,0]},"2018-08-26":{"openToReviewRequest":[0,0,0,0],"reviewRequestToFirst":[0,0,0,0],"reviewRequestToApproved":[0,5,0,0]},"2018-09-02":{"openToReviewRequest":[0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,2,2],"reviewRequestToApproved":[1,0,0,0,0,0,2,3]},"2018-09-09":{"openToReviewRequest":[0,0,0,0],"reviewRequestToFirst":[0,0,0,0],"reviewRequestToApproved":[0,0,0,0]},"2018-09-16":{"openToReviewRequest":[0,0,0,0],"reviewRequestToFirst":[0,0,0,0],"reviewRequestToApproved":[0,0,0,0]},"2018-09-23":{"openToReviewRequest":[0,0,0,0,0,0,0,0],"reviewRequestToFirst":[8,2,3,0,0,3,0,0],"reviewRequestToApproved":[8,2,3,0,0,3,0,0]},"2018-09-30":{"openToReviewRequest":[0,0,0],"reviewRequestToFirst":[0,0,0],"reviewRequestToApproved":[0,0,0]},"2018-10-14":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,6,0,0,0,1,4,0,2,3,2,2,2],"reviewRequestToApproved":[0,0,0,6,0,0,6,1,4,0,2,3,2,2,6]},"2018-10-21":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,2,1,2],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,2,1,2]},"2018-10-28":{"openToReviewRequest":[0,0,0,0],"reviewRequestToFirst":[1,0,1,0],"reviewRequestToApproved":[1,0,1,0]},"2018-11-04":{"openToReviewRequest":[0,0,0,0],"reviewRequestToFirst":[0,0,0,1],"reviewRequestToApproved":[0,0,0,1]},"2018-11-11":{"openToReviewRequest":[0,0,0,0],"reviewRequestToFirst":[1,0,0,0],"reviewRequestToApproved":[1,1,0,0]},"2018-11-18":{"openToReviewRequest":[0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,4],"reviewRequestToApproved":[1,0,0,0,0,0,0,4]},"2018-11-25":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,7,0,0,0,0,3],"reviewRequestToApproved":[0,0,0,0,0,0,7,0,0,0,0,3]},"2018-12-02":{"openToReviewRequest":[0,0,0,2,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,5,1,1,0,0,0,0,4,0],"reviewRequestToApproved":[0,0,0,5,1,1,0,0,6,0,4,0]},"2018-12-09":{"openToReviewRequest":[0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0]},"2018-12-16":{"openToReviewRequest":[3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,10,0,0,7],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,13,0,0,7]},"2019-01-06":{"openToReviewRequest":[25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[2,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0]},"2018-12-30":{"openToReviewRequest":[11,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[3,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[3,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-01-13":{"openToReviewRequest":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-04-07":{"openToReviewRequest":[83,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0]},"2019-01-20":{"openToReviewRequest":[3,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-01-27":{"openToReviewRequest":[6,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0]},"2019-02-03":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],"reviewRequestToApproved":[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2]},"2019-05-26":{"openToReviewRequest":[111,3,0,0,0,0,0,0,0,0,0,1,0,0,0],"reviewRequestToFirst":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-02-10":{"openToReviewRequest":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,3]},"2019-02-17":{"openToReviewRequest":[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,5,0,0,0,0,0,0,2,2],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,0,0,4,1,0,0,0,5,0,0,0,0,0,0,2,2]},"2019-02-24":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0,0,0],"reviewRequestToApproved":[0,2,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,2,2,0,0,0]},"2019-03-03":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,4,0,0,0,0,0,3]},"2019-03-10":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,47,3,2],"reviewRequestToApproved":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,47,3,2]},"2019-03-17":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,2,2],"reviewRequestToApproved":[0,52,0,0,0,0,0,0,0,0,0,0,0,2,2]},"2019-03-24":{"openToReviewRequest":[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,2,1,2,1,1,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0],"reviewRequestToApproved":[0,2,1,2,1,2,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0]},"2019-03-31":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2],"reviewRequestToApproved":[0,0,1,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2]},"2019-04-14":{"openToReviewRequest":[0,0,0,0],"reviewRequestToFirst":[0,0,0,0],"reviewRequestToApproved":[0,0,0,0]},"2019-05-05":{"openToReviewRequest":[18,0,0,0,0,0,0],"reviewRequestToFirst":[2,0,0,0,0,0,2],"reviewRequestToApproved":[4,6,0,0,3,0,2]},"2019-04-21":{"openToReviewRequest":[0,0],"reviewRequestToFirst":[0,0],"reviewRequestToApproved":[0,0]},"2019-04-28":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0]},"2019-05-12":{"openToReviewRequest":[4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,2,0,0,0,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-05-19":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,2,0],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,2,0]},"2019-06-02":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-06-09":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,3],"reviewRequestToApproved":[0,0,0,1,0,0,0,0,0,0,1,0,17,0,0,0,0,3]},"2019-06-16":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-06-23":{"openToReviewRequest":[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2],"reviewRequestToApproved":[7,1,0,0,0,0,0,0,0,0,0,0,0,1,0,3,0,2]},"2019-06-30":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,2,2,1],"reviewRequestToApproved":[0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,2,2,1]},"2019-07-07":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4]},"2019-07-14":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,2],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,2]},"2019-07-21":{"openToReviewRequest":[0,0,0,0,0],"reviewRequestToFirst":[0,1,0,0,3],"reviewRequestToApproved":[0,1,0,0,3]},"2019-07-28":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,1],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,1]},"2019-09-01":{"openToReviewRequest":[36,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0]},"2019-08-04":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,1,0,1,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[1,1,0,1,0,0,0,0,0,0,0,0,0]},"2019-08-18":{"openToReviewRequest":[14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,3,0,0,2,2,2],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,3,4,0,2,2,2]},"2019-08-11":{"openToReviewRequest":[1,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[2,1,1,0,0,0,1,0,0,0,0,0],"reviewRequestToApproved":[2,1,1,0,0,0,3,0,0,0,0,0]},"2019-08-25":{"openToReviewRequest":[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-09-08":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0],"reviewRequestToApproved":[0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0]},"2019-09-29":{"openToReviewRequest":[18,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[7,1,0,0,0,5,0,0,0,4,0,0,0,0,0,0,0]},"2019-09-15":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,1,0]},"2019-09-22":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-10-06":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,7,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,8,0,0,0,0,0,0,0]},"2019-10-27":{"openToReviewRequest":[16,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,1,0,0,0,0,1,0,0,0],"reviewRequestToApproved":[23,0,0,0,0,1,0,0,0,0,1,0,0,0]},"2019-10-13":{"openToReviewRequest":[0,0],"reviewRequestToFirst":[4,2],"reviewRequestToApproved":[4,2]},"2019-10-20":{"openToReviewRequest":[0,0,0,0,0],"reviewRequestToFirst":[0,0,0,3,2],"reviewRequestToApproved":[0,0,0,3,2]},"2019-11-03":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,2,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,2,0]},"2019-11-17":{"openToReviewRequest":[13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[2,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-11-10":{"openToReviewRequest":[0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0]},"2019-11-24":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2019-12-01":{"openToReviewRequest":[5,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,3,1,1,1,1],"reviewRequestToApproved":[0,0,0,5,0,0,0,3,1,1,1,1]},"2020-01-05":{"openToReviewRequest":[29,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[2,0,0,0,0,0,0,0,1,0,0,4,0,0,2],"reviewRequestToApproved":[2,10,0,0,0,0,0,0,2,0,0,4,0,0,2]},"2019-12-08":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,1,1,0,0,0,0,3,0,0,0],"reviewRequestToApproved":[0,0,1,1,0,0,0,4,4,0,0,0]},"2019-12-15":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,3,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,18,0,0,3,0,0,0]},"2020-05-24":{"openToReviewRequest":[162,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[3,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,1,5,0,0,0,0,0,0,4,2],"reviewRequestToApproved":[3,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,1,5,0,0,3,0,0,0,4,2]},"2019-12-22":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[4,4,15,15,15,15,15,2,2,2,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[4,16,15,15,16,17,16,2,2,2,0,0,0,0,0,1,0,0,0,0,0,0,0,0,11]},"2019-12-29":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,1],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,1]},"2020-01-12":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0],"reviewRequestToApproved":[0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,2,2,2,0,0]},"2020-01-19":{"openToReviewRequest":[5,6,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1],"reviewRequestToApproved":[0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1]},"2020-07-19":{"openToReviewRequest":[187,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[2,0,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[23,0,0,0,0,0,0,2,14,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0]},"2020-01-26":{"openToReviewRequest":[5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2020-02-02":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,1,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,1,0,0,0,0]},"2020-02-09":{"openToReviewRequest":[3,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,4,3,2,3,0],"reviewRequestToApproved":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,4,3,2,3,0]},"2020-02-16":{"openToReviewRequest":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0],"reviewRequestToApproved":[0,1,0,0,1,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0]},"2020-05-10":{"openToReviewRequest":[83,54,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[4,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0]},"2020-02-23":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,2,2,0,0,2,2,2],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,13,3,2,0,0,2,2,2]},"2020-03-01":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2020-03-08":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2]},"2020-03-15":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0]},"2020-03-22":{"openToReviewRequest":[2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,1,0,1,3,0,0,0,0,0,0,0,0,0,0,2],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,1,0,1,3,0,0,0,0,0,0,0,0,0,0,2]},"2020-03-29":{"openToReviewRequest":[3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1],"reviewRequestToApproved":[1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1]},"2020-04-05":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,10,4,0,10,0,0,0,0,2,2,2,2,2,2],"reviewRequestToApproved":[0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,10,4,0,10,0,0,0,0,2,2,2,2,2,2]},"2020-04-12":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0],"reviewRequestToApproved":[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0]},"2020-04-19":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2020-04-26":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2020-05-03":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,1,0,0,0,0,0,0,0,4,0,0,3,3,2],"reviewRequestToApproved":[0,0,0,1,2,0,0,0,0,0,0,4,0,0,3,3,2]},"2020-05-17":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,1,1,0,0,1,0,18,0,4,0,0,0,0,3,0,3,3,0,3,3],"reviewRequestToApproved":[0,1,1,8,0,1,0,18,0,4,0,0,0,0,3,0,3,3,0,3,3]},"2020-05-31":{"openToReviewRequest":[15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,1,0,0,2,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,3,0,0,0,1,1],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,1,0,2,2,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,3,0,9,0,1,1]},"2020-06-07":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3],"reviewRequestToApproved":[0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3]},"2020-06-14":{"openToReviewRequest":[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,2,7,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3],"reviewRequestToApproved":[1,2,7,0,1,0,1,0,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3]},"2020-06-21":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,3],"reviewRequestToApproved":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,4,3]},"2020-06-28":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0]},"2020-07-05":{"openToReviewRequest":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0]},"2020-07-12":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2],"reviewRequestToApproved":[1,0,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2]},"2020-07-26":{"openToReviewRequest":[6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2],"reviewRequestToApproved":[0,1,0,1,0,0,7,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,2,2]},"2020-08-02":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,6,0,1,0,2,0,2,2,0,0,0,0,2],"reviewRequestToApproved":[0,0,6,0,1,0,2,0,2,2,0,0,0,0,2]},"2020-08-09":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,4,0,3],"reviewRequestToApproved":[1,0,0,0,0,0,0,0,0,0,0,0,4,0,3]},"2020-08-16":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,1,0,0,0,0,4,0,0,3,0,0,2],"reviewRequestToApproved":[0,1,0,0,0,0,4,0,0,3,0,0,2]},"2020-08-23":{"openToReviewRequest":[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[2,0,0,0,0,0,0,0,0,4,0,2,2,3,2],"reviewRequestToApproved":[2,0,0,0,0,0,0,0,0,4,0,3,2,5,2]},"2020-08-30":{"openToReviewRequest":[0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,2,0,0,0,0,0,2],"reviewRequestToApproved":[1,2,0,0,0,0,0,2]},"2020-09-27":{"openToReviewRequest":[25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,3,3,0,0,0,0,0,0,1,0,0,0,0,0,0,0]},"2020-09-06":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,8,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3],"reviewRequestToApproved":[0,0,0,0,0,0,8,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,3]},"2020-09-13":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,2,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,3],"reviewRequestToApproved":[0,0,2,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,3,0,0,0,0,16,3]},"2020-09-20":{"openToReviewRequest":[7,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,2,0,0],"reviewRequestToApproved":[1,0,0,2,0,0]},"2020-10-18":{"openToReviewRequest":[27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,4],"reviewRequestToApproved":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,4]},"2020-10-04":{"openToReviewRequest":[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"2020-10-11":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0]},"2020-10-25":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToApproved":[0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0]},"2020-11-01":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,8,0,0,0,0,0,0,1,0,3],"reviewRequestToApproved":[1,0,0,17,0,0,0,0,0,0,1,0,3]},"2020-11-08":{"openToReviewRequest":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[1,0,0,0,0,0,0,0,1,1,0,0,0,0,4,4],"reviewRequestToApproved":[1,0,0,0,8,0,0,0,1,1,0,0,6,0,4,4]},"2020-11-15":{"openToReviewRequest":[0,0,0,0,0,0,0,0,0,0],"reviewRequestToFirst":[0,0,0,0,0,0,3,3,0,2],"reviewRequestToApproved":[0,0,0,0,0,0,4,3,0,2]},"2020-11-22":{"openToReviewRequest":[0],"reviewRequestToFirst":[0],"reviewRequestToApproved":[0]}};</script>
+
+        <script type="text/javascript">
+        const orderedWeeks = Object.keys(byWeekData).map(w => moment(w)).sort((a, b) => a - b).map(w => w.format('YYYY-MM-DD'));
+
+        const maxOpts = {
+            label: 'Maximum time',
+            borderColor: '#e76f51',
+            backgroundColor: '#e76f51',
+            fill: false,
+        };
+        const minOpts = {
+            label: 'Minimum time',
+            borderColor: '#2a9d8f',
+            backgroundColor: '#2a9d8f',
+            fill: false,
+        };
+        const avgOpts = {
+            label: 'Average time',
+            borderColor: '#3d405b',
+            backgroundColor: '#3d405b',
+            fill: false,
+        };
+
+        const chartOpts = {
+            legend: {
+                position: 'bottom',
+            },
+            tooltips: {
+                mode: "x",
+            },
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Week',
+                    },
+                    ticks: {
+                        autoSkip: true,
+                        maxRotation: 50,
+                        minRotation: 50,
+                    },
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Days',
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                    }
+                }],
+            },
+        };
+
+        const volCtx = document.getElementById("prVolume").getContext('2d');
+        const volChart = new Chart(volCtx, {
+            type: 'line',
+            data: {
+                labels: orderedWeeks,
+                datasets: [{
+                    data: orderedWeeks.map(w => byWeekData[w].openToReviewRequest.length),
+                    ...avgOpts, // steal colours
+                    label: '# of PRs',
+                }],
+            },
+            options: {
+                ...chartOpts,
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Number of PRs',
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                        }
+                    }]
+                }
+            },
+        });
+
+        const openCtx = document.getElementById("openToReviewRequest").getContext('2d');
+        const openChart = new Chart(openCtx, {
+            type: 'line',
+            data: {
+                labels: orderedWeeks,
+                datasets: [{
+                    data: orderedWeeks.map(w => Math.max(...byWeekData[w].openToReviewRequest)),
+                    ...maxOpts,
+                },{
+                    data: orderedWeeks.map(w => Math.min(...byWeekData[w].openToReviewRequest)),
+                    ...minOpts,
+                },{
+                    data: orderedWeeks.map(w => byWeekData[w].openToReviewRequest.reduce((s, c) => s + c, 0) / byWeekData[w].openToReviewRequest.length),
+                    ...avgOpts,
+                }],
+            },
+            options: chartOpts,
+        });
+
+        const firstCtx = document.getElementById("firstReview").getContext('2d');
+        const firstChart = new Chart(firstCtx, {
+            type: 'line',
+            data: {
+                labels: orderedWeeks,
+                datasets: [{
+                    data: orderedWeeks.map(w => Math.max(...byWeekData[w].reviewRequestToFirst)),
+                    ...maxOpts,
+                },{
+                    data: orderedWeeks.map(w => Math.min(...byWeekData[w].reviewRequestToFirst)),
+                    ...minOpts,
+                },{
+                    data: orderedWeeks.map(w => byWeekData[w].reviewRequestToFirst.reduce((s, c) => s + c, 0) / byWeekData[w].reviewRequestToFirst.length),
+                    ...avgOpts,
+                }],
+            },
+            options: chartOpts,
+        });
+
+        const approvedCtx = document.getElementById("approvingReview").getContext('2d');
+        const approvedChart = new Chart(approvedCtx, {
+            type: 'line',
+            data: {
+                labels: orderedWeeks,
+                datasets: [{
+                    data: orderedWeeks.map(w => Math.max(...byWeekData[w].reviewRequestToApproved)),
+                    ...maxOpts,
+                },{
+                    data: orderedWeeks.map(w => Math.min(...byWeekData[w].reviewRequestToApproved)),
+                    ...minOpts,
+                },{
+                    data: orderedWeeks.map(w => byWeekData[w].reviewRequestToApproved.reduce((s, c) => s + c, 0) / byWeekData[w].reviewRequestToApproved.length),
+                    ...avgOpts,
+                }],
+            },
+            options: chartOpts,
+        });
+
+        </script>
+    </body>
+</html>
