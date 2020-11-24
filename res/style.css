@@ -1,0 +1,11 @@
+body {
+    text-align: center;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+div.canvas {
+    position: relative;
+    width: 1000px;
+    height: 600px;
+    display: inline-block;
+}
