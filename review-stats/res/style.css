@@ -13,3 +13,19 @@ div.canvas {
     height: 600px;
     display: inline-block;
 }
+
+details[open] > .container {
+    background-color: #f3f3f3;
+    padding: 8px;
+    padding-top: 0;
+}
+
+details > summary {
+    padding: 2px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+details[open] > summary {
+    padding-bottom: 10px;
+}
