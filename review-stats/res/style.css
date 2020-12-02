@@ -1,0 +1,15 @@
+body {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 300;
+}
+
+body.graphs {
+    text-align: center;
+}
+
+div.canvas {
+    position: relative;
+    width: 1000px;
+    height: 600px;
+    display: inline-block;
+}
