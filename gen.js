@@ -6,7 +6,7 @@ const fs = require("fs");
 const mkdirp = require("mkdirp");
 const moment = require("moment");
 
-let auth = {token: process.env['GH_AUTH_TOKEN']};
+let auth = {token: process.env['GH_PAT']};
 if (!auth.token) {
     auth = require("./auth.json");
 }
