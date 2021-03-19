@@ -19,6 +19,7 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@releases/v2
       env:
         ACCESS_TOKEN: ${{ secrets.GH_PAT }}
+        GH_PAT: ${{ secrets.GH_PAT }}
         BASE_BRANCH: ${{ steps.extract_branch.outputs.branch }}
         BRANCH: gh-pages
         BUILD_SCRIPT: "yarn install && node ./gen-element-team.js"
