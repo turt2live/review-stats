@@ -3,7 +3,7 @@ name: Docs [Element]
 on: 
   push:
     branches:
-      - master
+      - main
     # TODO: Keep all historical builds (like the js-sdk)
     #tags: ['v*']
 jobs:
