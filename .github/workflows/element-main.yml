@@ -23,4 +23,4 @@ jobs:
         BASE_BRANCH: ${{ steps.extract_branch.outputs.branch }}
         BRANCH: gh-pages
         BUILD_SCRIPT: "yarn install && node ./gen-element-team.js"
-        FOLDER: "review-stats"
+        FOLDER: "html"
