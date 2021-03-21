@@ -2,8 +2,6 @@ const gen = require("./gen");
 const fs = require("fs").promises;
 
 (async function() {
-    await fs.mkdir("./tmp");
-
     await gen("matrix-org", "matrix-js-sdk", "element-web");
     await gen("matrix-org", "matrix-js-sdk", "Design");
     await gen("matrix-org", "matrix-js-sdk", "Product");

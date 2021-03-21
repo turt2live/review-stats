@@ -137,7 +137,7 @@ module.exports = async function(orgName, repoName, teamName) {
 
         const allTimeFname = `${filePrefix}all_time.html`;
         console.log(`Rendering ${allTimeFname}`);
-        let result = await engine.renderFile("index.liquid", {
+        let result = await engine.renderFile("graphs.liquid", {
             orgName,
             repoName,
             teamName,
