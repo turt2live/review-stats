@@ -16,9 +16,11 @@ module.exports = async function(orgName, repoName, teamName) {
     const tmpFile = path.join('tmp', `tmp.${orgName}.${repoName}.json`);
 
     const prs = [];
+    let hasCommunity = true;
     if (fs.existsSync(tmpFile)) {
         const data = JSON.parse(fs.readFileSync(tmpFile));
         prs.push(...data['prs']);
+        hasCommunity = data.hasCommunity !== false;
     } else {
         let lastId = null;
         while (true) {
@@ -32,10 +34,13 @@ module.exports = async function(orgName, repoName, teamName) {
             prs.push(...(nodes.map(e => e['node'])));
             if (nodes.length === 0) break;
             lastId = nodes[nodes.length - 1]['cursor'];
+            if (repository.isPrivate) {
+                hasCommunity = false;
+            }
         }
     }
 
-    fs.writeFileSync(tmpFile, JSON.stringify({prs}, null, 4));
+    fs.writeFileSync(tmpFile, JSON.stringify({prs, hasCommunity}, null, 4));
 
     // Metrics:
     // Time from Open -> Review Request
@@ -79,7 +84,7 @@ module.exports = async function(orgName, repoName, teamName) {
         const week = findWeekStart(requestDate);
         const key = week.format('YYYY-MM-DD');
         const mainMetrics = incomplete ? incompleteByWeek : metricsByWeek;
-        const groupedByWeek = pr["authorAssociation"] === 'MEMBER'
+        const groupedByWeek = (pr["authorAssociation"] === 'MEMBER' || !hasCommunity)
             ? (incomplete ? coreIncompleteByWeek : coreByWeek)
             : (incomplete ? communityIncompleteByWeek : communityByWeek);
         if (!mainMetrics[key]) {

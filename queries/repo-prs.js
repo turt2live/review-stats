@@ -4,6 +4,7 @@ module.exports = function repoPrs(owner, name, after) {
     return `
     {
         repository(owner: "${owner}", name: "${name}") {
+            isPrivate
             pullRequests(first: 100${after ? ` after: "${after}"` : ""}) {
                 edges {
                     cursor
