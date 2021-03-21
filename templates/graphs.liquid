@@ -44,13 +44,6 @@
         <script type="text/javascript">
         const orderedWeeks = Object.keys(byWeekData).map(w => moment(w)).sort((a, b) => a - b).map(w => w.format('YYYY-MM-DD'));
 
-        let maxDays = orderedWeeks.map(w => [
-            ...byWeekData[w].openToReviewRequest,
-            ...byWeekData[w].reviewRequestToFirst,
-            ...byWeekData[w].reviewRequestToApproved,
-        ].sort((a, b) => b - a)[0]).sort((a, b) => b - a)[0];
-        maxDays = (Math.ceil(maxDays / 10) * 10) + 10;
-
         const maxOpts = {
             label: 'Maximum time',
             borderColor: '#e76f51',
@@ -96,8 +89,6 @@
                     },
                     ticks: {
                         beginAtZero: true,
-                        maxTicksLimit: maxDays,
-                        suggestedMax: maxDays,
                     }
                 }],
             },
