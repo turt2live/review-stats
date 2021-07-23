@@ -9,6 +9,14 @@
         <h1>{{orgName}}/{{repoName}} review stats ({{group}})</h1>
         <p>For team <code>{{teamName}}</code></p>
 
+        {% if isComplete %}
+        <h2>Review request queue size</h2>
+        <p>Approximated for what the size would have been at the time.</p>
+        <div class='canvas'>
+            <canvas id="prQueue"></canvas>
+        </div>
+        {% endif %}
+
         <h2>Volume of PRs put up for review</h2>
         <p>Organized by the week in which review was first requested.</p>
         <div class='canvas'>
@@ -36,8 +44,11 @@
             <canvas id="approvingReview"></canvas>
         </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.1/dist/chart.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
+        <script src="https://www.chartjs.org/chartjs-chart-financial/chartjs-chart-financial.js"></script>
 
         <script type="text/javascript">const byWeekData = {{rawData}};</script>
 
@@ -93,6 +104,88 @@
                 }],
             },
         };
+
+        const queueEl = document.getElementById("prQueue");
+        if (queueEl) {
+            const queueCtx = queueEl.getContext('2d');
+            const queueChart = new Chart(queueCtx, {
+                type: 'candlestick',
+                data: {
+                    labels: orderedWeeks,
+                    datasets: [{
+                        data: orderedWeeks.map(w => {
+                            const prWeeks = byWeekData[w].queueSize;
+                            let open = 0;
+                            let close = 0;
+                            let max = Number.MIN_VALUE;
+                            let min = Number.MAX_VALUE;
+                            for (let i = 0; i < 7; i++) {
+                                let c = 0;
+                                for (const week of prWeeks) {
+                                    const v = week[i];
+                                    if (v === null) continue;
+                                    if (v >= 0) {
+                                        c++;
+                                    } else {
+                                        c--;
+                                    }
+                                }
+                                if (i === 0) open = c;
+                                if (i === 6) close = c;
+                                max = Math.max(max, c);
+                                min = Math.min(min, c);
+                            }
+                            return {x: luxon.DateTime.fromFormat(w, "yyyy-LL-dd").valueOf(), o: open, c: close, h: max, l: min};
+                        }),
+                        label: '# of PRs',
+                        color: {
+                            up: '#d84343',
+                            down: '#7cd843',
+                            unchanged: '#999'
+                        },
+                    }],
+                },
+                options: {
+                    ...chartOpts,
+                    scales: {
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Number of PRs',
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                            }
+                        }]
+                    },
+                    plugins: {
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: (item, obj) => {
+                                    const point = item.raw;
+                                    let diff = point.c - point.o;
+                                    if (diff === 0) {
+                                        diff = "+/- 0";
+                                    } else if (diff > 0) {
+                                        diff = "+" + diff;
+                                    }
+                                    return [
+                                        "Start of week: " + point.o,
+                                        "End of week: " + point.c + " (" + diff + ")",
+                                        "Max for week: " + point.h,
+                                        "Min for week: " + point.l,
+                                    ];
+                                },
+                                title: (items, obj) => {
+                                    return "Week of " + luxon.DateTime.fromMillis(items[0].raw.x).toFormat('LLL dd, yyyy');
+                                },
+                            }
+                        }
+                    }
+                },
+            })
+        }
 
         const volCtx = document.getElementById("prVolume").getContext('2d');
         const volChart = new Chart(volCtx, {

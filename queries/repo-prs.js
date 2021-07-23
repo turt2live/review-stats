@@ -10,7 +10,7 @@ module.exports = function repoPrs(owner, name, after) {
                     cursor
                     node {
                         id
-                        timelineItems(first: 25, itemTypes: [PULL_REQUEST_REVIEW, REVIEW_REQUESTED_EVENT, REVIEW_REQUEST_REMOVED_EVENT]) {
+                        timelineItems(first: 25, itemTypes: [PULL_REQUEST_REVIEW, REVIEW_REQUESTED_EVENT, REVIEW_REQUEST_REMOVED_EVENT, CLOSED_EVENT, MERGED_EVENT]) {
                             edges {
                                 node {
                                     ... on PullRequestReview {
@@ -55,6 +55,22 @@ module.exports = function repoPrs(owner, name, after) {
                                             ... on Team {
                                                 name
                                             }
+                                        }
+                                    }
+
+                                    ... on ClosedEvent {
+                                        __typename
+                                        createdAt
+                                        actor {
+                                            login
+                                        }
+                                    }
+
+                                    ... on MergedEvent {
+                                        __typename
+                                        createdAt
+                                        actor {
+                                            login
                                         }
                                     }
                                 }
