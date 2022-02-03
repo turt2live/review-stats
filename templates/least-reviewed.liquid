@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{orgName}}/{{repoName}}</title>
+        <link rel="stylesheet" href="../../../res/style.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <h1>{{orgName}}/{{repoName}} least reviewed review stats ({{group}})</h1>
+        <p>For team <code>{{teamName}}</code></p>
+
+        <ul>
+        {% for week in weekKeys %}
+        {% assign prs = data[week].prs %}
+        {% if prs.length > 1 %}
+        <li>
+            Week of {{week}} ({{prs.length}} total):
+            <ul>
+                {% for pr in prs %}
+                <li><a href="{{pr}}">{{pr}}</a> ({{data[week].days}} days)</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% elsif prs.length == 1 %}
+        <li>Week of {{week}}: <a href="{{prs[0]}}">{{prs[0]}}</a> ({{data[week].days}} days)</li>
+        {% endif %}
+        {% endfor %}
+        </ul>
+    </body>
+</html>

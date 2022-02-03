@@ -62,6 +62,9 @@ module.exports = async function(orgName, repoName, teamName) {
     const coreIncompleteByWeek = {};
     const communityIncompleteByWeek = {};
 
+    const leastReviewCoreByWeek = {};
+    const leastReviewCommunityByWeek = {};
+
     const ghFormat = "YYYY-MM-DDTHH:mm:ssZ"
 
     function findWeekStart(date) { // moment
@@ -147,23 +150,41 @@ module.exports = async function(orgName, repoName, teamName) {
         }
 
         const reviewRequest = events.find(e => e['__typename'] === 'ReviewRequestedEvent' && e['requestedReviewer'] && e['requestedReviewer']['name'] === teamName);
-        const firstReview = events.find(e => e['__typename'] === 'PullRequestReview' && e['onBehalfOf'] && e['onBehalfOf']['edges'] && e['onBehalfOf']['edges'].map(d => d['node']).filter(n => !!n).find(n => n['name'] === teamName));
-        const approvingReview = events.find(e => e['__typename'] === 'PullRequestReview' && e['state'] === 'APPROVED' && e['onBehalfOf'] && e['onBehalfOf']['edges'] && e['onBehalfOf']['edges'].map(d => d['node']).filter(n => !!n).find(n => n['name'] === teamName));
+        let firstReview = events.find(e => e['__typename'] === 'PullRequestReview' && e['onBehalfOf'] && e['onBehalfOf']['edges'] && e['onBehalfOf']['edges'].map(d => d['node']).filter(n => !!n).find(n => n['name'] === teamName));
+        let approvingReview = events.find(e => e['__typename'] === 'PullRequestReview' && e['state'] === 'APPROVED' && e['onBehalfOf'] && e['onBehalfOf']['edges'] && e['onBehalfOf']['edges'].map(d => d['node']).filter(n => !!n).find(n => n['name'] === teamName));
+        const lastRemoved = events.filter(e => e['__typename'] === 'ReviewRequestRemovedEvent' && e['requestedReviewer'] && e['requestedReviewer']['name'] === teamName).sort((a, b) => (a < b) ? 1 : ((a === b) ? 0 : -1))[0];
 
         if (!reviewRequest) continue;
-        const incomplete = !firstReview || !approvingReview;
+        let incomplete = !firstReview || !approvingReview;
+
+        // Consider last removed review request as the (incomplete) review date if needed
+        if (!approvingReview && lastRemoved && lastRemoved['createdAt'] > (firstReview ? firstReview['createdAt'] : '')) {
+            approvingReview = lastRemoved;
+            if (!firstReview) firstReview = lastRemoved;
+        }
+
+        // Count merged without review as reviewed on the merge date
+        if (incomplete && pr['state'] === 'MERGED') {
+            if (!firstReview) firstReview = {createdAt: pr['closedAt']};
+            if (!approvingReview) approvingReview = {createdAt: pr['closedAt']};
+            incomplete = false;
+        }
 
         const requestDate = moment.utc(reviewRequest['createdAt'], ghFormat);
-        const firstDate = incomplete ? moment.utc() : moment.utc(firstReview['createdAt'], ghFormat);
-        const approvedDate = incomplete ? moment.utc() : moment.utc(approvingReview['createdAt'], ghFormat);
+        const firstDate = (incomplete && !firstReview) ? moment.utc() : moment.utc(firstReview['createdAt'], ghFormat);
+        const approvedDate = (incomplete && !approvingReview) ? moment.utc() : moment.utc(approvingReview['createdAt'], ghFormat);
 
         const week = findWeekStart(requestDate);
         const key = week.format('YYYY-MM-DD');
+        const keyLeastReview = findWeekStart(firstDate).format('YYYY-MM-DD');
 
         const mainMetrics = incomplete ? incompleteByWeek : metricsByWeek;
         const groupedByWeek = (pr["authorAssociation"] === 'MEMBER' || !hasCommunity)
             ? (incomplete ? coreIncompleteByWeek : coreByWeek)
             : (incomplete ? communityIncompleteByWeek : communityByWeek);
+        const leastReviewByWeek = (pr["authorAssociation"] === 'MEMBER' || !hasCommunity)
+            ? leastReviewCoreByWeek
+            : leastReviewCommunityByWeek;
         if (!mainMetrics[key]) {
             mainMetrics[key] = {
                 openToReviewRequest: [],
@@ -180,6 +201,12 @@ module.exports = async function(orgName, repoName, teamName) {
                 queueSize: [],
             };
         }
+        if (!leastReviewByWeek[keyLeastReview]) {
+            leastReviewByWeek[keyLeastReview] = {
+                prs: [],
+                days: -1,
+            };
+        }
 
         mainMetrics[key].openToReviewRequest.push(requestDate.diff(createdDate, 'days'));
         mainMetrics[key].reviewRequestToFirst.push(firstDate.diff(requestDate, 'days'));
@@ -188,6 +215,16 @@ module.exports = async function(orgName, repoName, teamName) {
         groupedByWeek[key].openToReviewRequest.push(requestDate.diff(createdDate, 'days'));
         groupedByWeek[key].reviewRequestToFirst.push(firstDate.diff(requestDate, 'days'));
         groupedByWeek[key].reviewRequestToApproved.push(approvedDate.diff(requestDate, 'days'));
+
+        if (pr['state'] !== 'CLOSED') {
+            const daysStuck = firstDate.diff(requestDate, 'days');
+            if (leastReviewByWeek[keyLeastReview].days < daysStuck) {
+                leastReviewByWeek[keyLeastReview].prs = [pr['url']];
+                leastReviewByWeek[keyLeastReview].days = daysStuck;
+            } else if (leastReviewByWeek[keyLeastReview].days === daysStuck) {
+                leastReviewByWeek[keyLeastReview].prs.push(pr['url']);
+            }
+        }
     }
 
     fs.writeFileSync(path.join('tmp', `byweek.${orgName}.${repoName}.json`), JSON.stringify(metricsByWeek, null, 4));
@@ -197,6 +234,9 @@ module.exports = async function(orgName, repoName, teamName) {
     fs.writeFileSync(path.join('tmp', `byweek.incomplete.${orgName}.${repoName}.json`), JSON.stringify(incompleteByWeek, null, 4));
     fs.writeFileSync(path.join('tmp', `byweek.incomplete.core.${orgName}.${repoName}.json`), JSON.stringify(coreIncompleteByWeek, null, 4));
     fs.writeFileSync(path.join('tmp', `byweek.incomplete.community.${orgName}.${repoName}.json`), JSON.stringify(communityIncompleteByWeek, null, 4));
+
+    fs.writeFileSync(path.join('tmp', `byweek.core.leastreview.${orgName}.${repoName}.json`), JSON.stringify(leastReviewCoreByWeek, null, 4));
+    fs.writeFileSync(path.join('tmp', `byweek.community.leastreview.${orgName}.${repoName}.json`), JSON.stringify(leastReviewCommunityByWeek, null, 4));
 
     const engine = new Liquid({root: './templates'});
     const htmlOutDir = "html";
@@ -250,6 +290,26 @@ module.exports = async function(orgName, repoName, teamName) {
         });
         fs.writeFileSync(path.join(outDir, sinceFname), result);
     }
+
+    const renderCoreLeastReviewed = await engine.renderFile("least-reviewed.liquid", {
+        orgName,
+        repoName,
+        teamName,
+        group: 'core',
+        data: leastReviewCoreByWeek,
+        weekKeys: Object.keys(leastReviewCoreByWeek).sort().reverse(),
+    });
+    fs.writeFileSync(path.join(outDir, `core_least_reviewed.html`), renderCoreLeastReviewed);
+
+    const renderCommunityLeastReviewed = await engine.renderFile("least-reviewed.liquid", {
+        orgName,
+        repoName,
+        teamName,
+        group: 'community',
+        data: leastReviewCommunityByWeek,
+        weekKeys: Object.keys(leastReviewCommunityByWeek).sort().reverse(),
+    });
+    fs.writeFileSync(path.join(outDir, `community_least_reviewed.html`), renderCommunityLeastReviewed);
 
     // Copy assets
     const assetPath = "res";

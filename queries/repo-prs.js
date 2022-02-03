@@ -82,6 +82,8 @@ module.exports = function repoPrs(owner, name, after) {
                         closedAt
                         createdAt
                         updatedAt
+                        number
+                        url
                     }
                 }
             }
