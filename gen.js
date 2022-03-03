@@ -176,7 +176,7 @@ module.exports = async function(orgName, repoName, teamName) {
 
         const week = findWeekStart(requestDate);
         const key = week.format('YYYY-MM-DD');
-        const keyLeastReview = findWeekStart(firstDate).format('YYYY-MM-DD');
+        const keyLeastReview = findWeekStart(requestDate).format('YYYY-MM-DD');
 
         const mainMetrics = incomplete ? incompleteByWeek : metricsByWeek;
         const groupedByWeek = (pr["authorAssociation"] === 'MEMBER' || !hasCommunity)
