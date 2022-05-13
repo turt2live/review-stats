@@ -131,9 +131,7 @@ function renderSection(stats) {
         + `<li>Least reviewed PRs: ${stats.leastReviewed.prs.length}-way tie at ${stats.leastReviewed.days} calendar days.<ul>${leastReviewedList.join('')}</ul></li>`;
 }
 
-(async function() {
-    const repos = process.argv.slice(3);
-    const teamName = process.argv[2];
+module.exports = async function(teamName, repos) {
     const { statsLastWeek, statsThisWeek } = await aggregateTeam(teamName, repos);
 
     const htmlOutDir = "html";
@@ -147,4 +145,4 @@ function renderSection(stats) {
         + `<li>This week (so far):<ul>${renderSection(statsThisWeek.community)}</ul></li></ul>`;
 
     fs.writeFileSync(path.join(outDir, "summary.html"), output, "utf-8");
-})();
+};
