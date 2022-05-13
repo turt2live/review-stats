@@ -101,6 +101,7 @@ function mapLeastReviewedToObj(leastRev, obj) {
     if (!leastRev) return;
     if (leastRev.days > obj.days) {
         obj.prs = leastRev.prs;
+        obj.days = leastRev.days;
     } else if (leastRev.days === obj.days) {
         obj.prs = [...obj.prs, ...leastRev.prs];
     }
