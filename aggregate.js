@@ -46,7 +46,23 @@ async function aggregateTeam(teamName, repoRefs) {
         community: JSON.parse(JSON.stringify(template)),
     };
 
+    function ensureExists(week, obj) {
+        if (!obj[week]) {
+            obj[week] = {
+                openToReviewRequest: [],
+                reviewRequestToFirst: [],
+                reviewRequestToApproved: [],
+                queueSize: [],
+            };
+        }
+    }
+
     for (const record of allStats) {
+        ensureExists(lastWeek, record.coreByWeek);
+        ensureExists(lastWeek, record.communityByWeek);
+        ensureExists(thisWeek, record.coreByWeek);
+        ensureExists(thisWeek, record.communityByWeek);
+
         const coreQueueLastWeek = record.coreByWeek[lastWeek]["queueSize"];
         const communityQueueLastWeek = record.communityByWeek[lastWeek]["queueSize"];
         const coreQueueThisWeek = record.coreByWeek[thisWeek]["queueSize"];
@@ -82,6 +98,7 @@ async function aggregateTeam(teamName, repoRefs) {
 }
 
 function mapLeastReviewedToObj(leastRev, obj) {
+    if (!leastRev) return;
     if (leastRev.days > obj.days) {
         obj.prs = leastRev.prs;
     } else if (leastRev.days === obj.days) {
