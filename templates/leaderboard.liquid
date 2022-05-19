@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{orgName}}/{{repoName}}</title>
+        <link rel="stylesheet" href="../../../res/style.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+    </head>
+    <body class='graphs'>
+        <h1>{{teamName}} reviewer leaderboard</h1>
+        <p>For repos: {{repos}}</p>
+
+        <p><i>
+            "Months" are actually the month in which the first day of the week resides in. This means that
+            a week which spans two months will only count towards the oldest month of the set.
+        </i></p>
+
+        <p><i>
+            To count as a review for a PR, the reviewer must be the <b>first</b> reviewer, or the one that
+            cleared the team review.
+        </i></p>
+
+        {% for month in combined._keyOrder %}
+            <h2>{{ month }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Reviewer</th>
+                        <th>Core PRs reviewed</th>
+                        <th>Community PRs reviewed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for login in combined._loginKeyOrder %}
+                    <tr>
+                        <td>{{login|escape}}</td>
+                        <td>{{combined[month][login]['core']}}</td>
+                        <td>{{combined[month][login]['community']}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </body>
+</html>

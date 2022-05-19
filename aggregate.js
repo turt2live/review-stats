@@ -1,28 +1,14 @@
-const analyze = require("./lib/analyze");
 const findWeekStart = require("./lib/findWeekStart");
-const getPrs = require("./lib/getPrs");
 const moment = require("moment");
 const path = require("path");
 const fs = require("fs");
 const mkdirp = require("mkdirp");
+const statsForRefs = require("./lib/statsForRefs");
 
 async function aggregateTeam(teamName, repoRefs) {
     console.log(`Generating aggregated stats for ${teamName} in repos:`, repoRefs);
 
-    const allStats = [];
-    for (const ref of repoRefs) {
-        const [orgName, repoName] = ref.split('/');
-        const { prs, hasCommunity } = await getPrs(orgName, repoName, teamName);
-        const stats = await analyze(prs, hasCommunity, orgName, repoName, teamName);
-        allStats.push({
-            orgName,
-            repoName,
-            teamName,
-            prs,
-            hasCommunity,
-            ...stats,
-        });
-    }
+    const allStats = await statsForRefs(teamName, repoRefs);
 
     const thisWeek = findWeekStart(moment()).format('YYYY-MM-DD');
     const lastWeek = findWeekStart(moment()).add(-1, 'week').format('YYYY-MM-DD');
