@@ -58,7 +58,13 @@ async function appendKeyOrder(month) {
     keys.sort((a, b) => b[1] - a[1]);
     month._keyOrder = keys.map(k => k[0]);
 
-    const logins = Array.from(Object.keys(month[Array.from(Object.keys(month))[0]])).map(k => [k, k.toLowerCase()]);
+    const allLogins = new Set();
+    for (const [key, reviews] of Object.entries(month)) {
+        for (const login of Object.keys(reviews)) {
+            allLogins.add(login);
+        }
+    }
+    const logins = Array.from(allLogins).map(k => [k, k.toLowerCase()]);
     logins.sort((a, b) => a[1].localeCompare(b[1]));
     month._loginKeyOrder = logins.map(k => k[0]);
 }
